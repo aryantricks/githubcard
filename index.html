@@ -547,6 +547,11 @@
 
             toggleFormButton.addEventListener('click', function () {
                 userFormContainer.classList.toggle('hidden');
+                if (userFormContainer.classList.contains('hidden')) {
+                    toggleFormButton.innerText = 'Update Date With Yours';
+                } else {
+                    toggleFormButton.innerText = 'Close';
+                }
             });
 
         });
