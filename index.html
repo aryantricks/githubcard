@@ -529,7 +529,7 @@
         }
     </style>
 
-    <button id="toggleFormButton" class="toggle-button">Update Date With Yours</button>
+    <button id="toggleFormButton" class="toggle-button">Update Data With Yours</button>
 
     <div id="userFormContainer" class="form-container hidden">
         <form class="form-container" onsubmit="fetchUserData(event); return false;">
@@ -548,7 +548,7 @@
             toggleFormButton.addEventListener('click', function () {
                 userFormContainer.classList.toggle('hidden');
                 if (userFormContainer.classList.contains('hidden')) {
-                    toggleFormButton.innerText = 'Update Date With Yours';
+                    toggleFormButton.innerText = 'Update Data With Yours';
                 } else {
                     toggleFormButton.innerText = 'Close';
                 }
