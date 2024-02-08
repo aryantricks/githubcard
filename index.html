@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Github Profile Page</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #f0f0f0;
+            padding: 20px auto;
+
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+
+        }
+
+        .maincontainer {
+            display: grid;
+            grid-template-areas:
+                "profilepicture followinterect"
+                "profilepicture followdata"
+                "profilepicture biodata";
+            grid-template-columns: 1fr 2fr;
+
+            height: 100%;
+
+            max-height: 300px;
+
+            background-color: #f5f5f5;
+
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+
+
+            padding: 20px;
+
+
+        }
+
+
+        @media screen and (max-width:720px) {
+            .maincontainer {
+                display: grid;
+                grid-template-areas:
+                    "profilepicture followinterect"
+                    "biodata biodata"
+                    "followdata followdata";
+                grid-template-columns: 1fr fr;
+
+                height: 100%;
+
+            }
+
+        }
+
+        #profilepicture {
+            grid-area: profilepicture;
+        }
+
+        #followdata {
+            grid-area: followdata;
+        }
+
+        #followinterect {
+            grid-area: followinterect;
+        }
+
+        #biodata {
+            grid-area: biodata;
+        }
+
+
+
+        /* .sample {
+            border: 2px solid black;
+        } */
+
+        #profilepicture {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            /* border: 2px solid black; */
+        }
+
+        #profilepicture img {
+            height: auto;
+            width: 100%;
+            border: 2px solid transparent;
+
+        }
+
+        #followinterect {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 2px;
+        }
+
+        #followinterect div,
+        #followinterect .username {
+            width: 48%;
+            /* min-width: fit-content; */
+            text-align: center;
+        }
+
+        /* .username{
+            display: flex;
+            overflow: scroll;
+            overflow-x: scroll;
+        } */
+
+        #followinterect #interectbuttons {
+            display: flex;
+            gap: 2px;
+            /* flex-wrap: wrap; */
+
+        }
+
+        #followinterect #interectbuttons button {
+            width: 48%;
+            /* min-width: fit-content; */
+            border: none;
+            padding: 5px 5px;
+            border-radius: 3px;
+            font-size: 1rem;
+            height: 100%;
+            padding: 5px;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        #followbutton {
+            cursor: pointer;
+        }
+
+        @media screen and (max-width:800px) {
+            #followinterect {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: start;
+                gap: 10px;
+            }
+
+            #followinterect #interectbuttons {
+                width: 100%;
+            }
+
+            #followinterect #interectbuttons * {
+                width: 48%;
+            }
+
+            #followinterect #username {
+                width: 100%;
+                /* border: 2px solid black; */
+                text-align: left;
+            }
+
+            .username {
+                padding-left: 5px;
+            }
+
+
+        }
+
+        #followdata {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+
+        #followdata p {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        #biodata {
+            padding: 5px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="maincontainer">
+            <div class="sample" id="profilepicture">
+                <img src="" alt="User Profile Picture" id="avatar">
+            </div>
+            <div class="sample" id="followdata">
+                <p>
+                    <strong id="repository"></strong>
+                    repostories
+                </p>
+                <p>
+                    <strong id="followers"></strong>
+                    followers
+                </p>
+                <p>
+                    <strong id="following"></strong>
+                    following
+                </p>
+
+            </div>
+            <div class="sample" id="followinterect">
+                <h3 class="username" id="username"></h3>
+                <div id="interectbuttons">
+                    <button id="messagebutton">Message</button>
+                    <button id="followbutton">Follow</button>
+                </div>
+
+            </div>
+            <div class="sample" id="biodata">
+                <h2 id="name"></h2>
+                <p id="bio"></p>
+                <p id="company"></p>
+                <p id="location"></p>
+                <p id="email"></p>
+            </div>
+        </div>
+
+
+        <div class="postcontainer" id="postcontainer">
+
+        </div>
+    </div>
+
+
+    <script>
+
+        id = "aryantricks"
+        async function fetchGitHubUserData(id) {
+            try {
+                const response = await fetch('https://api.github.com/users/' + id);
+                const userData = await response.json();
+
+                const userInformation = {
+                    name: userData.name,
+                    username: userData.login,
+                    bio: userData.bio,
+                    email: userData.email,
+                    company: userData.company,
+                    publicRepos: userData.public_repos,
+                    publicGists: userData.public_gists,
+                    location: userData.location,
+                    followers: userData.followers,
+                    following: userData.following,
+                    avatarUrl: userData.avatar_url,
+                    githubUrl: userData.html_url
+                };
+
+                return userInformation;
+            } catch (error) {
+                console.error('Error fetching GitHub user data:', error);
+                return null;
+            }
+        }
+
+
+    </script>
+
+
+    <style>
+        #postcontainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .post {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+        }
+
+        .post h2 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        .post p {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .post a {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .post a:hover {
+            background-color: #0056b3;
+        }
+
+        @media screen and (max-width: 768px) {
+            #postcontainer {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+
+    <script>
+        function fetchAndDisplayRepos(id) {
+            const apiUrl = `https://api.github.com/users/${id}/repos`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(repos => {
+                    const postContainer = document.getElementById('postcontainer');
+                    postContainer.innerHTML = '';
+
+                    repos.forEach(repo => {
+                        const { name, language, description, html_url, languages_url } = repo;
+
+                        // Create post div
+                        const postDiv = document.createElement('div');
+                        postDiv.classList.add('post');
+
+                        // Create elements for repo details
+                        const nameElement = document.createElement('h2');
+                        nameElement.textContent = name;
+
+                        const languageElement = document.createElement('p');
+                        fetch(languages_url)
+                            .then(response => response.json())
+                            .then(languagesData => {
+                                // Extract language names from the languages data
+                                const languages = Object.keys(languagesData);
+                                languageElement.textContent = `Languages: ${languages.length > 0 ? languages.join(', ') : 'Not specified'}`;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching languages:', error);
+                                languageElement.textContent = 'Languages: Not specified';
+                            });
+
+                        const descriptionElement = document.createElement('p');
+                        descriptionElement.textContent = description || 'No description provided';
+
+                        // Create 'See Repository' button
+                        const buttonElement = document.createElement('a');
+                        buttonElement.textContent = 'See Repository';
+                        buttonElement.href = html_url;
+                        buttonElement.target = '_blank'; // Open link in new tab
+
+                        // Append elements to post div
+                        postDiv.appendChild(nameElement);
+                        postDiv.appendChild(languageElement);
+                        postDiv.appendChild(descriptionElement);
+                        postDiv.appendChild(buttonElement);
+
+                        // Append post div to container
+                        postContainer.appendChild(postDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching repositories:', error);
+                });
+        }
+
+
+
+
+
+        function updatedata(userid) {
+
+            fetchAndDisplayRepos(userid);
+            fetchGitHubUserData(userid).then(userData => {
+                if (userData) {
+                    document.getElementById("avatar").src = userData.avatarUrl;
+                    document.getElementById("name").innerHTML = userData.name
+                    document.getElementById("bio").innerHTML = userData.bio
+                    if (userData.company) {
+                        document.getElementById("company").innerHTML = `Company: ${userData.company}`;
+                    } else {
+                        document.getElementById("company").innerHTML = '';
+                    }
+
+                    if (userData.location) {
+                        document.getElementById("location").innerHTML = `Location: ${userData.location}`;
+                    } else {
+                        document.getElementById("location").innerHTML = '';
+                    }
+
+                    if (userData.email) {
+                        document.getElementById("email").innerHTML = `Email: ${userData.email}`;
+                    } else {
+                        document.getElementById("email").innerHTML = '';
+                    }
+
+                    document.getElementById("following").innerHTML = userData.following
+                    document.getElementById("followers").innerHTML = userData.followers
+                    document.getElementById("repository").innerHTML = userData.publicRepos
+                    document.getElementById("followbutton").onclick = function () {
+                        window.location.href = userData.githubUrl;
+                    };
+
+                    document.getElementById("username").innerHTML = "@" + userData.username
+                } else {
+                    console.log('Failed to fetch user data.');
+                }
+            });
+
+
+        }
+
+
+
+
+        function fetchUserData() {
+            event.preventDefault();
+            const username = document.getElementById("usernameInput").value.trim();
+            updatedata(username);
+        }
+
+        function fetchadmin() {
+            const admin = "arycodes";
+            updatedata(admin);
+        }
+
+    </script>
+
+
+    <style>
+        .form-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f0f0f0;
+            padding: 80px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 400px;
+        }
+
+
+        .form-label {
+            display: block;
+
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0px;
+        }
+
+        .form-submit {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-submit:hover {
+            background-color: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .toggle-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <button id="toggleFormButton" class="toggle-button">Toggle Form</button>
+
+    <div id="userFormContainer" class="form-container hidden">
+        <form class="form-container" onsubmit="fetchUserData(event); return false;">
+            <label class="form-label" for="usernameInput">Username:</label>
+            <input class="form-input" type="text" id="usernameInput" name="usernameInput" required>
+            <button class="form-submit" type="submit">Submit</button>
+        </form>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleFormButton = document.getElementById('toggleFormButton');
+            const userFormContainer = document.getElementById('userFormContainer');
+
+            toggleFormButton.addEventListener('click', function () {
+                userFormContainer.classList.toggle('hidden');
+            });
+
+        });
+
+
+
+    </script>
+
+
+    <script>fetchadmin()</script>
+
+
+
+</body>
+
+
+
+</html>
